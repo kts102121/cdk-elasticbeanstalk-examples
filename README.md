@@ -44,3 +44,5 @@ Cloudfront creates two origins: `s3` for static web hosting and `elb` from elast
 [AWS CDK Part 3: How to create an RDS instance](https://blog.codecentric.de/en/2019/11/aws-cdk-part-3-how-to-create-an-rds-instance/) for creating Aurora RDS instance using CDK
 
 [Multiple Cloudfront Origins with Behavior Path Redirection](https://stackoverflow.com/questions/31567994/multiple-cloudfront-origins-with-behavior-path-redirection) for awssome CloudFront + Lambda@Edge 
+
+[Implementing Default Directory Indexes in Amazon S3-backed Amazon CloudFront Origins Using Lambda@Edge](https://aws.amazon.com/blogs/compute/implementing-default-directory-indexes-in-amazon-s3-backed-amazon-cloudfront-origins-using-lambdaedge/) for S3 Subdirectory Root Object with CloudFront issue
