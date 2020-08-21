@@ -1,0 +1,1 @@
+INSERT INTO account (id, email, password) VALUES (1, 'foo@bar.com', 'HelloPassword');
