@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta content="text/html;charset=utf-8" http-equiv="Content-Type"></meta>
-    <meta content="utf-8" http-equiv="encoding"></meta>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding"> 
     <title>Elastic Beanstalk</title>
     <style>
       body {
@@ -89,6 +89,7 @@
         <li><a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_nodejs_geddy_elasticache.html">Deploy a Geddy Application with Amazon ElastiCache to AWS Elastic Beanstalk </a></li>
         <li><a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_nodejs_custom_container.html">Customizing and Configuring a Node.js Container </a></li>
         <li><a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.loggingS3.title.html">Working with Logs</a></li>
+        <li><a href="beer/">Cheers!</a></li>
         <button id="ajaxButton" type="button" onclick="loadDoc()">Make a Request</button>
         <p id="demo"></p>
       </ul>
@@ -100,10 +101,10 @@
           if (this.readyState == 4 && this.status == 200) {
             document.getElementById("demo").innerHTML = this.responseText;
           } else {
-            document.getElementById("demo").innerHTML = 'error';
+            document.getElementById("demo").innerHTML = '';
           }
         };
-        xhttp.open("GET", "", true);
+        xhttp.open("GET", "https://d2y4rbubsr8uw8.cloudfront.net/api/user/1", true);
         xhttp.send();
       }
     </script>

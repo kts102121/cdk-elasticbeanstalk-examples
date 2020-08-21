@@ -54,15 +54,27 @@ export class CloudFrontStack extends cdk.Stack {
 
         lambdaRole.attachInlinePolicy(cloudwatchLogsPolicy);
 
-        const modifyCloudFrontRequestLambda = new lambda.Function(this, 'MyRequestModifyLambdaFunction', {
+        const modifyViewerRequestURILambda = new lambda.Function(this, 'MyModifyViewerRequestURILambda', {
             runtime: lambda.Runtime.NODEJS_12_X,
             code: lambda.Code.fromAsset('lambda'),
-            handler: 'index.handler',
+            handler: 'modifyViewerRequestURI.handler',
             role: lambdaRole,
         })
 
-        const modifyCloudFrontRequestLambdaVersion = new lambda.Version(this, 'MyRequestModifyLambdaFunctionVersion', {
-            lambda: modifyCloudFrontRequestLambda,
+        const modifyOriginRequestURILambda = new lambda.Function(this, 'MyModifyOriginRequestURILambda', {
+            runtime: lambda.Runtime.NODEJS_12_X,
+            code: lambda.Code.fromAsset('lambda'),
+            handler: 'modifyOriginRequestURI.handler',
+            role: lambdaRole,
+        })
+
+
+        const modifyViewerRequestLambdaVersion = new lambda.Version(this, 'MyModifyViewerRequestURILambdaFunctionVersion', {
+            lambda: modifyViewerRequestURILambda,
+        });
+
+        const modifyOriginRequestURILambdaVersion = new lambda.Version(this, 'MyModifyOriginRequestURILambdaFunctionVersion', {
+            lambda: modifyOriginRequestURILambda,
         });
 
         const distribution = new cloudfront.CloudFrontWebDistribution(this, 'MyDynamicDistribution', {
@@ -84,7 +96,7 @@ export class CloudFrontStack extends cdk.Stack {
                         },
                         lambdaFunctionAssociations: [{
                             eventType: cloudfront.LambdaEdgeEventType.VIEWER_REQUEST,
-                            lambdaFunction: modifyCloudFrontRequestLambdaVersion,
+                            lambdaFunction: modifyViewerRequestLambdaVersion,
                         }]
                     }]
                 },
@@ -93,7 +105,13 @@ export class CloudFrontStack extends cdk.Stack {
                         s3BucketSource: myWebHostingBucket,
                         originAccessIdentity: originAccessIdentity,
                     },
-                    behaviors: [{ isDefaultBehavior: true }]
+                    behaviors: [{ 
+                        isDefaultBehavior: true,
+                        lambdaFunctionAssociations: [{
+                            eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
+                            lambdaFunction: modifyOriginRequestURILambdaVersion,
+                        }]
+                    }]
                 }
             ],
             loggingConfig: {
