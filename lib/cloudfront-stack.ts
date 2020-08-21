@@ -12,6 +12,8 @@ interface CloudFrontStackProps extends cdk.StackProps {
 }
 
 export class CloudFrontStack extends cdk.Stack {
+    readonly myLoggingBucket: s3.Bucket;
+
     constructor(scope: cdk.Construct, id: string, props?: CloudFrontStackProps) {
         super(scope, id, props);
 
@@ -20,7 +22,7 @@ export class CloudFrontStack extends cdk.Stack {
             websiteIndexDocument: 'index.html'
         });
 
-        const myLoggingBucket = new s3.Bucket(this, 'MyLoggingBucket', {
+        this.myLoggingBucket = new s3.Bucket(this, 'MyLoggingBucket', {
             removalPolicy: cdk.RemovalPolicy.RETAIN,
         });
 
@@ -29,7 +31,7 @@ export class CloudFrontStack extends cdk.Stack {
         });
 
         myWebHostingBucket.grantRead(originAccessIdentity);
-        myLoggingBucket.grantReadWrite(originAccessIdentity);
+        this.myLoggingBucket.grantReadWrite(originAccessIdentity);
 
         const lambdaRole = new iam.Role(this, 'MyRequestModifyLambdaFunctionRole', {
             assumedBy: new CompositePrincipal(
@@ -115,7 +117,7 @@ export class CloudFrontStack extends cdk.Stack {
                 }
             ],
             loggingConfig: {
-                bucket: myLoggingBucket,
+                bucket: this.myLoggingBucket,
                 prefix: 'cloudfront/'
             }
         });

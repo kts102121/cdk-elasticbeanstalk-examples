@@ -6,6 +6,7 @@ import { VpcStack } from '../lib/vpc-stack';
 import { CloudFrontStack } from '../lib/cloudfront-stack'
 import 'dotenv/config'
 import { RdsStack } from '../lib/rds-stack';
+import { GlueStack } from '../lib/glue-stack';
 
 const app = new cdk.App();
 
@@ -16,13 +17,15 @@ const env = {
 
 const vpcStack = new VpcStack(app, 'VpcStack', { env: env });
 
-const rdsStack = new RdsStack(app, 'RdsStack', {myVpc: vpcStack.myVpc, rdsSecurityGroup: vpcStack.rdsSecurityGroup, env: env});
+const rdsStack = new RdsStack(app, 'RdsStack', {myVpc: vpcStack.myVpc, rdsSecurityGroup: vpcStack.rdsSecurityGroup, env: env });
 
-const ebStack = new ElasticBeanstalkStack(app, 'ElasticBeanstalkStack', { myVpc: vpcStack.myVpc, asgSecurityGroup: vpcStack.asgSecurityGroup, databaseCredentialsSecret: rdsStack.databaseCredentialsSecret, myRds: rdsStack.myRds, env: env});
+const ebStack = new ElasticBeanstalkStack(app, 'ElasticBeanstalkStack', { myVpc: vpcStack.myVpc, asgSecurityGroup: vpcStack.asgSecurityGroup, databaseCredentialsSecret: rdsStack.databaseCredentialsSecret, myRds: rdsStack.myRds, env: env });
 
-const cdnStack = new CloudFrontStack(app, 'CloudFrontStack', { ebEnv: ebStack.ebEnv, env: env});
+const cdnStack = new CloudFrontStack(app, 'CloudFrontStack', { ebEnv: ebStack.ebEnv, env: env });
 
+const glueStack = new GlueStack(app, 'GlueStack', { myLoggingBucket: cdnStack.myLoggingBucket, env: env })
 
 rdsStack.addDependency(vpcStack);
 ebStack.addDependency(rdsStack);
 cdnStack.addDependency(ebStack);
+glueStack.addDependency(cdnStack);
