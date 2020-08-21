@@ -32,10 +32,17 @@ CloudFront pushes access logs to s3. Glue and Athena helps the user to pull out 
  * `cdk diff`        compare deployed stack with current state
  * `cdk synth`       emits the synthesized CloudFormation template
 
+## How to use this?
+
+ * `npm run build && cdk synth && cdk deploy "*"` does magic.
+ * `cdk destroy "*"` destroys them. 
+
+ Should you wish to select which stacks to deploy, please use `cdk deploy VpcStack RdsStack ElasticBeanstalkStack` and so on.
+
 ## TODOs
 
  * Improve overall code quality
- * Find better ways to manage environment variables in both code and cdk projects 
+ * Find better ways to manage environment variables in both code and cdk projects
 
 
 ## Kudos
