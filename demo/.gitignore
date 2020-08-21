@@ -14,3 +14,8 @@ mvnw.cmd
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+.settings
+.classpath
+.factorypath
+.project
