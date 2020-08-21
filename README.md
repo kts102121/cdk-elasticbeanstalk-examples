@@ -20,6 +20,8 @@ Standard Java SE 11 environment. You need to build your own project and submit j
 ### CloudFront
 Cloudfront creates two origins: `s3` for static web hosting and `elb` from elastic beanstalk. The stack deploys static files from `website` folder. Please change the url to the cloudfront elb origin
 
+### Glue and Athena
+CloudFront pushes access logs to s3. Glue and Athena helps the user to pull out useful insights from it without provisioning additional infrastructure
 
 ## Useful commands
 
