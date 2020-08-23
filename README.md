@@ -55,3 +55,7 @@ CloudFront pushes access logs to s3. Glue and Athena helps the user to pull out 
 [Multiple Cloudfront Origins with Behavior Path Redirection](https://stackoverflow.com/questions/31567994/multiple-cloudfront-origins-with-behavior-path-redirection) for awssome CloudFront + Lambda@Edge 
 
 [Implementing Default Directory Indexes in Amazon S3-backed Amazon CloudFront Origins Using Lambda@Edge](https://aws.amazon.com/blogs/compute/implementing-default-directory-indexes-in-amazon-s3-backed-amazon-cloudfront-origins-using-lambdaedge/) for S3 Subdirectory Root Object with CloudFront issue
+
+### For Awesome Spring Security form based login tutorials
+ * [[Spring Security] Database Authentication - Spring Boot (6)](https://velog.io/@minholee_93/Spring-Security-Database-Authentication-Spring-Boot-6)
+ * [Kotlin + Spring boot security + thymeleaf 로그인 구현(3)](https://bob-full.tistory.com/9)

@@ -6,6 +6,7 @@ import * as cloudfront from '@aws-cdk/aws-cloudfront'
 import * as lambda from '@aws-cdk/aws-lambda'
 import * as iam from '@aws-cdk/aws-iam';
 import { Policy, Effect, CompositePrincipal } from '@aws-cdk/aws-iam';
+import { RemovalPolicy } from '@aws-cdk/core';
 
 interface CloudFrontStackProps extends cdk.StackProps {
     ebEnv: eb.CfnEnvironment;
@@ -61,6 +62,10 @@ export class CloudFrontStack extends cdk.Stack {
             code: lambda.Code.fromAsset('lambda'),
             handler: 'modifyViewerRequestURI.handler',
             role: lambdaRole,
+            currentVersionOptions: {
+                removalPolicy: RemovalPolicy.RETAIN,
+                retryAttempts: 5
+            },
         })
 
         const modifyOriginRequestURILambda = new lambda.Function(this, 'MyModifyOriginRequestURILambda', {
@@ -68,6 +73,10 @@ export class CloudFrontStack extends cdk.Stack {
             code: lambda.Code.fromAsset('lambda'),
             handler: 'modifyOriginRequestURI.handler',
             role: lambdaRole,
+            currentVersionOptions: {
+                removalPolicy: RemovalPolicy.RETAIN,
+                retryAttempts: 5
+            },
         })
 
 
