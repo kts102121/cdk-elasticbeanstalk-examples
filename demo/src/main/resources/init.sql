@@ -1,1 +1,2 @@
-INSERT INTO account (id, email, password) VALUES (1, 'foo@bar.com', 'HelloPassword');
+INSERT INTO account (email, username, password) VALUES ('foo@bar.com', 'foo1', '$2a$10$ScI4QVvBrt43gZkyN7/L0Oio3gLCYcgNZnwwKj6H8KTjI6vuXXl7C');
+INSERT INTO `roles` (name, account_id) VALUES ('ROLE_USER', 1);

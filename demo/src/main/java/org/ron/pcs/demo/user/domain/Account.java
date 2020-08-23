@@ -1,12 +1,20 @@
 package org.ron.pcs.demo.user.domain;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -14,11 +22,18 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @Entity
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Account {
+public class Account implements Serializable {
+    /**
+     *
+     */
+    private static final long serialVersionUID = -8795719876766770651L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,8 +41,15 @@ public class Account {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @Column(name = "username", nullable = false)
+    private String username;
+
     @Column(name = "password", nullable = false)
     private String password;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id")
+    private Set<Role> roles;
 
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
@@ -38,8 +60,10 @@ public class Account {
     private Date updatedAt;
 
     @Builder
-    public Account(String email, String password) {
+    public Account(String email, String username, String password, Set<Role> roles) {
         this.email = email;
+        this.username = username;
         this.password = password;
+        this.roles = roles;
     }
 }

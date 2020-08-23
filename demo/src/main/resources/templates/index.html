@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <meta charset="UTF-8">
+        <title>Example</title>
+    </head>
+    <body>
+        <script type="text/javascript" sec:authorize="!isAuthenticated()">
+            location.href = "/login"
+        </script>
+
+        Hello World
+        
+        <div sec:authorize="isAuthenticated()">
+            Text visible only to authenticated users.
+        </div>
+
+        <span sec:authorize="hasRole('ROLE_ADMIN')">
+            Text visible only to authenticated <span th:text="${#authentication.getPrincipal().authorities}">users.</span>
+        </span>
+        <span sec:authorize="hasRole('ROLE_USER')">
+            Text visible only to authenticated <span th:text="${#authentication.getPrincipal().authorities}"></span>
+        </span>
+        <button>
+            <a href="/logout">logout</a>
+        </button>
+    </body>
+</html>

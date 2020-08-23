@@ -22,4 +22,8 @@ public class UserFindService {
     public List<Account> findAll() {
         return userRepository.findAll();
     }
+
+    public Account findByEmail(final String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("Account Not Found"));
+    }
 }

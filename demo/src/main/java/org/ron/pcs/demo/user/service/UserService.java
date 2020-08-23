@@ -12,7 +12,12 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
     private final UserRepository userRepository;
 
-    public Account create(AccountDTO.SignUpReq accountDto) {
-        return userRepository.save(accountDto.toEntity());
+    public Account create(final AccountDTO.SignUpReq accountDto) {
+        final Account account = userRepository.findByUsername(accountDto.getUsername());
+        if (account == null) {
+            return userRepository.save(accountDto.toEntity());
+        } else {
+            throw new IllegalArgumentException("The username or email you provided is already taken");
+        }
     }
 }
