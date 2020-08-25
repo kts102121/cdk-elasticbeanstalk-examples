@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.ron.pcs.demo.user.domain.AccountDTO;
-import org.ron.pcs.demo.user.domain.LoginForm;
 import org.ron.pcs.demo.user.domain.Role;
 import org.ron.pcs.demo.user.domain.AccountDTO.Res;
 import org.ron.pcs.demo.user.service.UserFindService;
@@ -13,23 +12,17 @@ import org.ron.pcs.demo.user.service.UserService;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @CrossOrigin("https://cloudfront.net")
 @RestController
 @RequiredArgsConstructor

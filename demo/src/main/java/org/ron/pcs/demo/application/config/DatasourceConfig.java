@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Profile;
 
 import lombok.AllArgsConstructor;
 
-@Profile(value = "prod")
+@Profile(value = {"prod","test"})
 @Configuration
 @AllArgsConstructor
 public class DatasourceConfig {

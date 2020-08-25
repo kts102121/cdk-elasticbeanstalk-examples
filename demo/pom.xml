@@ -44,6 +44,14 @@
 			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
 		</dependency>		
 		<dependency>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session-data-redis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 		</dependency>
@@ -69,12 +77,21 @@
     		<artifactId>hibernate-validator</artifactId>
     		<version>6.0.7.Final</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/resourcegroupstaggingapi -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>resourcegroupstaggingapi</artifactId>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/secretsmanager -->
 		<dependency>
     		<groupId>software.amazon.awssdk</groupId>
     		<artifactId>secretsmanager</artifactId>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/cloudfront -->
+		<dependency>
+    		<groupId>software.amazon.awssdk</groupId>
+    		<artifactId>cloudfront</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -107,7 +124,7 @@
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>bom</artifactId>
-                <version>2.14.1</version>
+                <version>2.14.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

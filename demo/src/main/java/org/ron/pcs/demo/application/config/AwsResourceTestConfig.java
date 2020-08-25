@@ -10,30 +10,18 @@ import org.springframework.context.annotation.Profile;
 
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.cloudfront.CloudFrontClient;
-import software.amazon.awssdk.services.resourcegroupstaggingapi.ResourceGroupsTaggingApiClient;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 
-@Profile(value = "prod")
+@Profile(value = "test")
 @Configuration
 @RequiredArgsConstructor
-public class AwsResourceConfig {
+public class AwsResourceTestConfig {
     private String dbCredentials;
     private static final String DB_URL = System.getenv("DB_URL");
     private String secretArn = System.getenv("SECRET_ARN");
 
     private final ObjectMapper objectMapper;
-
-    @Bean
-    public ResourceGroupsTaggingApiClient taggingClient() {
-        return ResourceGroupsTaggingApiClient.builder().region(Region.US_EAST_1).build();
-    }
-
-    @Bean
-    public CloudFrontClient cloudfrontClient() {
-        return CloudFrontClient.builder().region(Region.AWS_GLOBAL).build();
-    }
 
     @Bean
     public SecretsManagerClient secretsManagerClient() {
