@@ -1,12 +1,13 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import { SecurityGroup } from '@aws-cdk/aws-ec2';
+import { SecurityGroup, GatewayVpcEndpointAwsService } from '@aws-cdk/aws-ec2';
 
 export class VpcStack extends cdk.Stack {
     readonly myVpc: ec2.IVpc;
     readonly elbSecurityGroup: SecurityGroup;
     readonly asgSecurityGroup: SecurityGroup;
     readonly rdsSecurityGroup: SecurityGroup;
+    readonly elastiCacheSecurityGroup: SecurityGroup;
 
     constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
@@ -32,8 +33,15 @@ export class VpcStack extends cdk.Stack {
                     name: 'Database',
                     cidrMask: 24,
                 }
-            ],
+            ]
         });
+
+        this.myVpc.addGatewayEndpoint('s3-gateway', {
+            service: GatewayVpcEndpointAwsService.S3,
+            subnets: [{
+                subnetType: ec2.SubnetType.PRIVATE
+            }]
+        })
 
         this.elbSecurityGroup = new SecurityGroup(this, 'elbSecurityGroup', {
             allowAllOutbound: true,
@@ -59,5 +67,13 @@ export class VpcStack extends cdk.Stack {
         })
 
         this.rdsSecurityGroup.connections.allowFrom(this.asgSecurityGroup, ec2.Port.tcp(3306), 'Allow connections from eb Auto Scaling Group Security Group');
+    
+        this.elastiCacheSecurityGroup = new SecurityGroup(this, 'elastiCacheSecurityGroup', {
+            allowAllOutbound: false,
+            securityGroupName: 'elasti-sg',
+            vpc: this.myVpc,
+        });
+
+        this.elastiCacheSecurityGroup.connections.allowFrom(this.asgSecurityGroup, ec2.Port.tcp(6379), 'Allow connections from eb Auto Scaling Security Group');
     }
 }

@@ -9,12 +9,14 @@ import { ServicePrincipal, ManagedPolicy, Policy, Effect } from '@aws-cdk/aws-ia
 import { SecurityGroup } from '@aws-cdk/aws-ec2';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
 import 'dotenv/config'
+import { CfnCacheCluster } from '@aws-cdk/aws-elasticache';
 
 interface ElasticBeanstalkStackProps extends cdk.StackProps {
   myVpc: ec2.IVpc;
   asgSecurityGroup: SecurityGroup;
   databaseCredentialsSecret: Secret;
   myRds: DatabaseCluster;
+  myElastiCache: CfnCacheCluster;
 }
 
 export class ElasticBeanstalkStack extends cdk.Stack {
@@ -39,20 +41,34 @@ export class ElasticBeanstalkStack extends cdk.Stack {
         statements: [
           new iam.PolicyStatement({
             effect: Effect.ALLOW,
-            actions: ['secretsmanager:GetSecretValue'],
+            actions: ['secretsmanager:GetSecretValue',],
             resources: [props?.databaseCredentialsSecret.secretArn as string]
           })
         ]
     });
 
+    const taggingPolicy: Policy = new iam.Policy(this, 'taggingPolicy', {
+        policyName: `myEbTaggingPolicy`,
+        statements: [
+          new iam.PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+              'tag:GetResources', 'tag:TagResources', 'tag:UntagResources', 'tag:GetTagKeys', 'tag:GetTagValues', 'cloudfront:GetDistribution', 'acm:ListCertificates',
+            ],
+            resources: ['*'],
+          })
+        ]
+    })
+
     // Allow the app to get secret values
     ebRole.attachInlinePolicy(secretsManagerPolicy);
+    ebRole.attachInlinePolicy(taggingPolicy);
 
     // Needed for all those extra things
     ebRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName('AWSElasticBeanstalkWebTier'));
     ebRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName('AWSElasticBeanstalkMulticontainerDocker'));
     ebRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName('AWSElasticBeanstalkWorkerTier'));
-    ebRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'));    
+    ebRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'));
 
     // $(aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:<region>:<aws-account-id>:secret:<secret-arn> --region <region> | jq --raw-output '.SecretString' | jq -r .password) 
 
@@ -60,10 +76,21 @@ export class ElasticBeanstalkStack extends cdk.Stack {
     const envVars = [
       ['SECRET_ARN', `${props?.databaseCredentialsSecret.secretArn as string}`],
       ['SPRING_PROFILES_ACTIVE', 'prod'],
-      ['DB_URL', `${props?.myRds.clusterEndpoint.hostname as string}`]
+      ['DB_URL', `${props?.myRds.clusterEndpoint.hostname as string}`],
+      ['REDIS_URL', `${props?.myElastiCache.attrRedisEndpointAddress as string}`]
     ]
 
     const optionSettingProperties: eb.CfnEnvironment.OptionSettingProperty[] = [
+      {
+        namespace: 'aws:autoscaling:asg',
+        optionName: 'MinSize',
+        value: '1',
+      },
+      {
+        namespace: 'aws:autoscaling:asg',
+        optionName: 'MaxSize',
+        value: '20',
+      },
       {
         namespace: 'aws:ec2:vpc',
         optionName: 'VPCId',
@@ -99,6 +126,31 @@ export class ElasticBeanstalkStack extends cdk.Stack {
         namespace: 'aws:autoscaling:launchconfiguration',
         optionName: 'EC2KeyName',
         value: process.env.KEY_NAME
+      },
+      {
+        namespace: 'aws:ec2:instances',
+        optionName: 'EnableSpot',
+        value: 'true',
+      },
+      {
+        namespace: 'aws:ec2:instances',
+        optionName: 'InstanceTypes',
+        value: 't3.small,c3.large,c4.large,c5.large,m4.large,m5.large',
+      },
+      {
+        namespace: 'aws:ec2:instances',
+        optionName: 'SpotFleetOnDemandBase',
+        value: '1',
+      },
+      {
+        namespace: 'aws:ec2:instances',
+        optionName: 'SpotFleetOnDemandAboveBasePercentage',
+        value: '30',
+      },
+      {
+        namespace: 'aws:ec2:instances',
+        optionName: 'SpotMaxPrice',
+        value: 'null',
       },
       {
         namespace: 'aws:elasticbeanstalk:environment',

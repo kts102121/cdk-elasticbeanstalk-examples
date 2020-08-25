@@ -57,17 +57,6 @@ export class CloudFrontStack extends cdk.Stack {
 
         lambdaRole.attachInlinePolicy(cloudwatchLogsPolicy);
 
-        const modifyViewerRequestURILambda = new lambda.Function(this, 'MyModifyViewerRequestURILambda', {
-            runtime: lambda.Runtime.NODEJS_12_X,
-            code: lambda.Code.fromAsset('lambda'),
-            handler: 'modifyViewerRequestURI.handler',
-            role: lambdaRole,
-            currentVersionOptions: {
-                removalPolicy: RemovalPolicy.RETAIN,
-                retryAttempts: 5
-            },
-        })
-
         const modifyOriginRequestURILambda = new lambda.Function(this, 'MyModifyOriginRequestURILambda', {
             runtime: lambda.Runtime.NODEJS_12_X,
             code: lambda.Code.fromAsset('lambda'),
@@ -79,39 +68,13 @@ export class CloudFrontStack extends cdk.Stack {
             },
         })
 
-
-        const modifyViewerRequestLambdaVersion = new lambda.Version(this, 'MyModifyViewerRequestURILambdaFunctionVersion', {
-            lambda: modifyViewerRequestURILambda,
-        });
-
         const modifyOriginRequestURILambdaVersion = new lambda.Version(this, 'MyModifyOriginRequestURILambdaFunctionVersion', {
             lambda: modifyOriginRequestURILambda,
+            removalPolicy: RemovalPolicy.RETAIN,
         });
 
-        const distribution = new cloudfront.CloudFrontWebDistribution(this, 'MyDynamicDistribution', {
-            originConfigs: [
-                {
-                    customOriginSource: {
-                        domainName: props?.ebEnv.attrEndpointUrl || '',
-                        originProtocolPolicy: cloudfront.OriginProtocolPolicy.HTTP_ONLY,
-                    },
-                    behaviors: [{
-                        pathPattern: 'api/*',
-                        allowedMethods: cloudfront.CloudFrontAllowedMethods.ALL,
-                        forwardedValues: {
-                            queryString: true,
-                            cookies: {
-                                forward: 'all',
-                            },
-                            headers: ["*"]
-                        },
-                        lambdaFunctionAssociations: [{
-                            eventType: cloudfront.LambdaEdgeEventType.VIEWER_REQUEST,
-                            lambdaFunction: modifyViewerRequestLambdaVersion,
-                        }]
-                    }]
-                },
-                {
+        const myStaticResourceDistribution = new cloudfront.CloudFrontWebDistribution(this, 'MyStaticWebDistribution', {
+            originConfigs: [{
                     s3OriginSource: {
                         s3BucketSource: myWebHostingBucket,
                         originAccessIdentity: originAccessIdentity,
@@ -123,20 +86,58 @@ export class CloudFrontStack extends cdk.Stack {
                             lambdaFunction: modifyOriginRequestURILambdaVersion,
                         }]
                     }]
-                }
-            ],
+            }],
             loggingConfig: {
                 bucket: this.myLoggingBucket,
-                prefix: 'cloudfront/'
+                prefix: 'cloudfront/web/'
             }
         });
-
+        
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         new s3Deployment.BucketDeployment(this, 'MyStaticWebHostingDeployment', {
             sources: [s3Deployment.Source.asset(`${__dirname}/../website`)],
             destinationBucket: myWebHostingBucket,
-            distribution: distribution,
+            distribution: myStaticResourceDistribution,
             retainOnDelete: false
         });
+
+        const elbDistribution = new cloudfront.CloudFrontWebDistribution(this, 'MyDynamicDistribution', {
+            originConfigs: [{
+                customOriginSource: {
+                    domainName: props?.ebEnv.attrEndpointUrl || '',
+                    originProtocolPolicy: cloudfront.OriginProtocolPolicy.HTTP_ONLY,
+                },
+                behaviors: [{
+                    isDefaultBehavior: true,
+                    allowedMethods: cloudfront.CloudFrontAllowedMethods.ALL,
+                    forwardedValues: {
+                        queryString: true,
+                        cookies: {
+                            forward: 'all',
+                        },
+                        headers: ["*"]
+                    },
+                }],
+            }],
+            loggingConfig: {
+                bucket: this.myLoggingBucket,
+                prefix: 'cloudfront/elb/'
+            },
+            defaultRootObject: ''
+        });
+
+        (elbDistribution.node.tryFindChild("CFDistribution") as cloudfront.CfnDistribution).addPropertyOverride("Tags", [
+            {
+                'Key': 'ResourceType',
+                'Value': 'ElbDistribution'
+            }
+        ]);
+
+        (myStaticResourceDistribution.node.tryFindChild("CFDistribution") as cloudfront.CfnDistribution).addPropertyOverride("Tags", [
+            {
+                'Key': 'ResourceType',
+                'Value': 'StaticDistribution'
+            }
+        ]);
     }
 }

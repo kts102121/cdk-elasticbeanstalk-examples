@@ -146,7 +146,7 @@ export class GlueStack extends cdk.Stack {
                         }
                     ],
                     inputFormat: 'org.apache.hadoop.mapred.TextInputFormat',
-                    location: `s3://${props?.myLoggingBucket.bucketName as string}/cloudfront`,
+                    location: `s3://${props?.myLoggingBucket.bucketName as string}/cloudfront/web`,
                     serdeInfo: {
                         parameters: {
                             'field.delim': '\t',
@@ -278,7 +278,7 @@ export class GlueStack extends cdk.Stack {
                             type: 'int'
                         }
                     ],
-                    location: `s3://${props?.myLoggingBucket.bucketName as string}/cloudfront`,
+                    location: `s3://${props?.myLoggingBucket.bucketName as string}/cloudfront/web`,
                     serdeInfo: {},
                     storedAsSubDirectories: false
                 }
