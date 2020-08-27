@@ -1,9 +1,10 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import { SecurityGroup, GatewayVpcEndpointAwsService } from '@aws-cdk/aws-ec2';
+import { SecurityGroup, GatewayVpcEndpointAwsService, Vpc } from '@aws-cdk/aws-ec2';
 
 export class VpcStack extends cdk.Stack {
     readonly myVpc: ec2.IVpc;
+    readonly bastionHostSecurityGroup: SecurityGroup;
     readonly elbSecurityGroup: SecurityGroup;
     readonly asgSecurityGroup: SecurityGroup;
     readonly rdsSecurityGroup: SecurityGroup;
@@ -43,6 +44,14 @@ export class VpcStack extends cdk.Stack {
             }]
         })
 
+        this.bastionHostSecurityGroup = new SecurityGroup(this, 'bastionHostSecurityGroup', {
+            allowAllOutbound: true,
+            securityGroupName: 'bastion-sg',
+            vpc: this.myVpc,
+        });
+
+        this.bastionHostSecurityGroup.addIngressRule(ec2.Peer.ipv4(`${process.env.MY_IP as string}`), ec2.Port.tcp(22));
+
         this.elbSecurityGroup = new SecurityGroup(this, 'elbSecurityGroup', {
             allowAllOutbound: true,
             securityGroupName: 'elb-sg',
@@ -59,6 +68,7 @@ export class VpcStack extends cdk.Stack {
         });
 
         this.asgSecurityGroup.connections.allowFrom(this.elbSecurityGroup, ec2.Port.tcp(80), 'Application Load Balancer Security Group');
+        this.asgSecurityGroup.connections.allowFrom(this.bastionHostSecurityGroup, ec2.Port.tcp(22), 'Allow connections from bastion hosts');
 
         this.rdsSecurityGroup = new SecurityGroup(this, 'rdsSecurityGroup', {
             allowAllOutbound: false,
@@ -67,7 +77,8 @@ export class VpcStack extends cdk.Stack {
         })
 
         this.rdsSecurityGroup.connections.allowFrom(this.asgSecurityGroup, ec2.Port.tcp(3306), 'Allow connections from eb Auto Scaling Group Security Group');
-    
+        this.rdsSecurityGroup.connections.allowFrom(this.bastionHostSecurityGroup, ec2.Port.tcp(3306), 'Allow connections from bastion hosts');
+
         this.elastiCacheSecurityGroup = new SecurityGroup(this, 'elastiCacheSecurityGroup', {
             allowAllOutbound: false,
             securityGroupName: 'elasti-sg',

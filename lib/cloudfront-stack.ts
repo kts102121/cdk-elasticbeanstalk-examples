@@ -7,6 +7,7 @@ import * as lambda from '@aws-cdk/aws-lambda'
 import * as iam from '@aws-cdk/aws-iam';
 import { Policy, Effect, CompositePrincipal } from '@aws-cdk/aws-iam';
 import { RemovalPolicy } from '@aws-cdk/core';
+import { PriceClass } from '@aws-cdk/aws-cloudfront';
 
 interface CloudFrontStackProps extends cdk.StackProps {
     ebEnv: eb.CfnEnvironment;
@@ -60,7 +61,7 @@ export class CloudFrontStack extends cdk.Stack {
         const modifyOriginRequestURILambda = new lambda.Function(this, 'MyModifyOriginRequestURILambda', {
             runtime: lambda.Runtime.NODEJS_12_X,
             code: lambda.Code.fromAsset('lambda'),
-            handler: 'modifyOriginRequestURI.handler',
+            handler: 'modifyHandleEndingSlash.handler',
             role: lambdaRole,
             currentVersionOptions: {
                 removalPolicy: RemovalPolicy.RETAIN,
@@ -82,7 +83,7 @@ export class CloudFrontStack extends cdk.Stack {
                     behaviors: [{ 
                         isDefaultBehavior: true,
                         lambdaFunctionAssociations: [{
-                            eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
+                            eventType: cloudfront.LambdaEdgeEventType.VIEWER_REQUEST,
                             lambdaFunction: modifyOriginRequestURILambdaVersion,
                         }]
                     }]
@@ -90,7 +91,8 @@ export class CloudFrontStack extends cdk.Stack {
             loggingConfig: {
                 bucket: this.myLoggingBucket,
                 prefix: 'cloudfront/web/'
-            }
+            },
+            priceClass: PriceClass.PRICE_CLASS_ALL
         });
         
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -123,7 +125,8 @@ export class CloudFrontStack extends cdk.Stack {
                 bucket: this.myLoggingBucket,
                 prefix: 'cloudfront/elb/'
             },
-            defaultRootObject: ''
+            defaultRootObject: '',
+            priceClass: PriceClass.PRICE_CLASS_ALL,
         });
 
         (elbDistribution.node.tryFindChild("CFDistribution") as cloudfront.CfnDistribution).addPropertyOverride("Tags", [

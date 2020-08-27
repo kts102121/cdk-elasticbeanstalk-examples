@@ -74,22 +74,27 @@ export class ElasticBeanstalkStack extends cdk.Stack {
 
     // Example of some options which can be configured
     const envVars = [
-      ['SECRET_ARN', `${props?.databaseCredentialsSecret.secretArn as string}`],
-      ['SPRING_PROFILES_ACTIVE', 'prod'],
-      ['DB_URL', `${props?.myRds.clusterEndpoint.hostname as string}`],
-      ['REDIS_URL', `${props?.myElastiCache.attrRedisEndpointAddress as string}`]
+      ['aws:autoscaling:trigger', 'LowerThreshold', '5'],
+      ['aws:autoscaling:trigger', 'MeasureName', 'CPUUtilization'],
+      ['aws:autoscaling:trigger', 'Unit', 'Percent'],
+      ['aws:autoscaling:trigger', 'UpperBreachScaleIncrement', '2'],
+      ['aws:autoscaling:trigger', 'UpperThreshold', '20'],
+      ['aws:elasticbeanstalk:application:environment', 'SECRET_ARN', `${props?.databaseCredentialsSecret.secretArn as string}`],
+      ['aws:elasticbeanstalk:application:environment', 'SPRING_PROFILES_ACTIVE', 'prod'],
+      ['aws:elasticbeanstalk:application:environment', 'DB_URL', `${props?.myRds.clusterEndpoint.hostname as string}`],
+      ['aws:elasticbeanstalk:application:environment', 'REDIS_URL', `${props?.myElastiCache.attrRedisEndpointAddress as string}`]
     ]
 
     const optionSettingProperties: eb.CfnEnvironment.OptionSettingProperty[] = [
       {
         namespace: 'aws:autoscaling:asg',
         optionName: 'MinSize',
-        value: '1',
+        value: '2',
       },
       {
         namespace: 'aws:autoscaling:asg',
         optionName: 'MaxSize',
-        value: '20',
+        value: '10',
       },
       {
         namespace: 'aws:ec2:vpc',
@@ -157,8 +162,8 @@ export class ElasticBeanstalkStack extends cdk.Stack {
         optionName: 'LoadBalancerType',
         value: 'application',
       },
-      ...envVars.map(([optionName, value]) => ({
-        namespace: 'aws:elasticbeanstalk:application:environment',
+      ...envVars.map(([namespace, optionName, value]) => ({
+        namespace,
         optionName,
         value,
       })),

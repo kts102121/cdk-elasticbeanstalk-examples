@@ -9,6 +9,7 @@ import { RdsStack } from '../lib/rds-stack';
 import { GlueStack } from '../lib/glue-stack';
 import { TestInfraStack } from '../lib/TestInfraStack';
 import { ElastiCacheStack } from '../lib/elasticache-stack';
+import { LinuxBastionStack } from '../lib/linux-bastion'
 
 const app = new cdk.App();
 
@@ -18,6 +19,8 @@ const env = {
 }
 
 const vpcStack = new VpcStack(app, 'VpcStack', { env: env });
+
+const bastionHost = new LinuxBastionStack(app, 'BastionHostStack', { myVpc: vpcStack.myVpc, bastionHostSecurityGroup: vpcStack.bastionHostSecurityGroup, env: env });
 
 const rdsStack = new RdsStack(app, 'RdsStack', {myVpc: vpcStack.myVpc, rdsSecurityGroup: vpcStack.rdsSecurityGroup, env: env });
 
@@ -29,6 +32,7 @@ const cdnStack = new CloudFrontStack(app, 'CloudFrontStack', { ebEnv: ebStack.eb
 
 const glueStack = new GlueStack(app, 'GlueStack', { myLoggingBucket: cdnStack.myLoggingBucket, env: env })
 
+bastionHost.addDependency(vpcStack);
 rdsStack.addDependency(vpcStack);
 ebStack.addDependency(rdsStack);
 ebStack.addDependency(elasticacheStack);

@@ -55,6 +55,7 @@ CloudFront pushes access logs to s3. Glue and Athena helps the user to pull out 
 [Multiple Cloudfront Origins with Behavior Path Redirection](https://stackoverflow.com/questions/31567994/multiple-cloudfront-origins-with-behavior-path-redirection) for awssome CloudFront + Lambda@Edge 
 
 [Implementing Default Directory Indexes in Amazon S3-backed Amazon CloudFront Origins Using Lambda@Edge](https://aws.amazon.com/blogs/compute/implementing-default-directory-indexes-in-amazon-s3-backed-amazon-cloudfront-origins-using-lambdaedge/) for S3 Subdirectory Root Object with CloudFront issue
+ * [Default files in S3 subdirectories using CloudFront and Lambda@Edge](https://medium.com/@chrispointon/default-files-in-s3-subdirectories-using-cloudfront-and-lambda-edge-941100a3c629) -> The previous one needs to have ending 'slash'. This takes care of it with querystrings.
 
 ### For Awesome Spring Security form based login tutorials
  * [[Spring Security] Database Authentication - Spring Boot (6)](https://velog.io/@minholee_93/Spring-Security-Database-Authentication-Spring-Boot-6)
