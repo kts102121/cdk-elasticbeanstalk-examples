@@ -3,26 +3,67 @@
     <head>
         <meta charset="UTF-8">
         <title>Example</title>
+        <style>
+            .center {
+              margin: auto;
+              width: 60%;
+              padding: 10px;
+              text-align: center;
+            }
+
+            #container {
+                margin: auto;
+                width: 60%;
+                border: 3px solid #73AD21;
+                padding: 10px;
+                text-align: center;
+            }
+
+            #container > div {
+                width: 100px;
+                display: inline-block;
+                vertical-align: top;
+
+                *display: inline;
+                zoom: 1;
+            }
+
+            #container:after {
+                content: "";
+                width: 100%;
+                display: inline-block;
+            }
+
+            img {
+                float: left;
+                width:  100px;
+                height: 100px;
+                object-fit: cover;
+            }
+        </style>
     </head>
     <body>
-        <script type="text/javascript" sec:authorize="!isAuthenticated()">
-            location.href = "/login"
-        </script>
-
-        Hello World
         
-        <div sec:authorize="isAuthenticated()">
-            Text visible only to authenticated users.
+        <div class="center">
+            <p><strong>Awesome Shop</p>
         </div>
 
-        <span sec:authorize="hasRole('ROLE_ADMIN')">
-            Text visible only to authenticated <span th:text="${#authentication.getPrincipal().authorities}">users.</span>
-        </span>
-        <span sec:authorize="hasRole('ROLE_USER')">
-            Text visible only to authenticated <span th:text="${#authentication.getPrincipal().authorities}"></span>
-        </span>
-        <button>
-            <a href="/logout">logout</a>
-        </button>
+        <div id="container">
+            <div class="column">
+                <a id="beer" href="beer/"><img src="static/img/beer.png" alt="Beer"/></a>
+            </div>
+
+            <div class="column">
+                <a id="milk" href="milk/"><img src="static/img/milk.png" alt="Beer"/></a>
+            </div>
+
+            <div class="column">
+                <a id="milk" href="partyhat/"><img src="static/img/partyhat.png" alt="Beer"/></a>
+            </div>
+        </div>
+
+        <link rel="stylesheet" type="text/css" href="css/main.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" />
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     </body>
 </html>
