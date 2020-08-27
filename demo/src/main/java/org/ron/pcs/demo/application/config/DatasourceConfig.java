@@ -7,12 +7,14 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import lombok.AllArgsConstructor;
 
 @Profile(value = {"prod","test"})
 @Configuration
 @AllArgsConstructor
+@EnableJpaAuditing
 public class DatasourceConfig {
     private final ProductionProperties dbCredentials;
 

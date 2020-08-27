@@ -18,6 +18,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,12 +55,12 @@ public class Account implements Serializable {
     @JoinColumn(name = "account_id")
     private Set<Role> roles;
 
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
+    @CreatedDate
+    @Column(columnDefinition = "TIMESTAMP", nullable = false)
     private Date createdAt;
 
     @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
     private Date updatedAt;
 
     @Builder
