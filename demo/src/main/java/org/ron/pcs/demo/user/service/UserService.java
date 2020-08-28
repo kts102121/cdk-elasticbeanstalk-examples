@@ -1,5 +1,7 @@
 package org.ron.pcs.demo.user.service;
 
+import org.ron.pcs.demo.application.exception.domain.BusinessException;
+import org.ron.pcs.demo.application.exception.dto.ErrorCode;
 import org.ron.pcs.demo.user.domain.Account;
 import org.ron.pcs.demo.user.domain.AccountDTO;
 import org.ron.pcs.demo.user.repository.UserRepository;
@@ -17,7 +19,7 @@ public class UserService {
         if (account == null) {
             return userRepository.save(accountDto.toEntity());
         } else {
-            throw new IllegalArgumentException("The username or email you provided is already taken");
+            throw new BusinessException("The username or email you provided is already taken", ErrorCode.IDENTIFIER_DUPLICATE);
         }
     }
 }
