@@ -79,10 +79,13 @@ export class ElasticBeanstalkStack extends cdk.Stack {
       ['aws:autoscaling:trigger', 'Unit', 'Percent'],
       ['aws:autoscaling:trigger', 'UpperBreachScaleIncrement', '2'],
       ['aws:autoscaling:trigger', 'UpperThreshold', '20'],
+      ['aws:elasticbeanstalk:cloudwatch:logs', 'StreamLogs', 'true'],
+      ['aws:elasticbeanstalk:cloudwatch:logs', 'DeleteOnTerminate', 'true'],
+      ['aws:elasticbeanstalk:cloudwatch:logs', 'RetentionInDays', '1'],
       ['aws:elasticbeanstalk:application:environment', 'SECRET_ARN', `${props?.databaseCredentialsSecret.secretArn as string}`],
       ['aws:elasticbeanstalk:application:environment', 'SPRING_PROFILES_ACTIVE', 'prod'],
       ['aws:elasticbeanstalk:application:environment', 'DB_URL', `${props?.myRds.clusterEndpoint.hostname as string}`],
-      ['aws:elasticbeanstalk:application:environment', 'REDIS_URL', `${props?.myElastiCache.attrRedisEndpointAddress as string}`]
+      ['aws:elasticbeanstalk:application:environment', 'REDIS_URL', `${props?.myElastiCache.attrRedisEndpointAddress as string}`],
     ]
 
     const optionSettingProperties: eb.CfnEnvironment.OptionSettingProperty[] = [
@@ -126,6 +129,11 @@ export class ElasticBeanstalkStack extends cdk.Stack {
         namespace: 'aws:autoscaling:launchconfiguration',
         optionName: 'SecurityGroups',
         value: props?.asgSecurityGroup.securityGroupId,
+      },
+      {
+        namespace: 'aws:autoscaling:launchconfiguration',
+        optionName: 'SSHSourceRestriction',
+        value: `tcp, 22, 22, ${props?.asgSecurityGroup.securityGroupId as string}`,
       },
       {
         namespace: 'aws:autoscaling:launchconfiguration',
