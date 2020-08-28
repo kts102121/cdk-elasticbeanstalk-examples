@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -31,6 +32,7 @@ import lombok.ToString;
 @Getter
 @Entity
 @ToString
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account implements Serializable {
     /**
@@ -69,5 +71,11 @@ public class Account implements Serializable {
         this.username = username;
         this.password = password;
         this.roles = roles;
+    }
+
+    public void updateMyAccount(AccountDTO.MyAccountReq dto) {
+        this.email = dto.getEmail();
+        this.username = dto.getUsername();
+        this.password = dto.getPassword();
     }
 }

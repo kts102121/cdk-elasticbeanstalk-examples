@@ -1,5 +1,6 @@
 package org.ron.pcs.demo.user.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,18 +42,21 @@ public class AccountDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class MyAccountReq {
+        private Long id;
         private String email;
+        private String username;
         private String password;
 
         @Builder
-        public MyAccountReq(String email, String password) {
+        public MyAccountReq(String email, String username, String password) {
             this.email = email;
+            this.username = username;
             this.password = password;
         }
     }
 
     @Getter
-    public static class Res {
+    public static class Res implements Serializable {
         private String email;
         private String username;
 

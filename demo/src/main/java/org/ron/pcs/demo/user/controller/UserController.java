@@ -10,10 +10,15 @@ import org.ron.pcs.demo.user.service.UserFindService;
 import org.ron.pcs.demo.user.service.UserService;
 
 import javax.validation.Valid;
+
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +38,7 @@ public class UserController {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping(value = "/{id}")
+    @Cacheable(value = "user", key = "#id")
     public AccountDTO.Res getUser(@PathVariable final Long id) {
         return new AccountDTO.Res(userFindService.findOne(id));
     }
@@ -60,5 +66,12 @@ public class UserController {
         }
 
         return new AccountDTO.Res(userService.create(dto));
+    }
+
+    @PatchMapping
+    @ResponseStatus(value = HttpStatus.OK)
+    @CachePut(value = "user", key = "#dto.id")
+    public AccountDTO.Res updateUser(@RequestBody @Valid final AccountDTO.MyAccountReq dto) {
+        return new AccountDTO.Res(userService.update(dto));
     }
 }

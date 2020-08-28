@@ -1,6 +1,7 @@
 package org.ron.pcs.demo.user.service;
 
 import org.ron.pcs.demo.application.exception.domain.BusinessException;
+import org.ron.pcs.demo.application.exception.domain.user.UserNotFoundException;
 import org.ron.pcs.demo.application.exception.dto.ErrorCode;
 import org.ron.pcs.demo.user.domain.Account;
 import org.ron.pcs.demo.user.domain.AccountDTO;
@@ -21,5 +22,12 @@ public class UserService {
         } else {
             throw new BusinessException("The username or email you provided is already taken", ErrorCode.IDENTIFIER_DUPLICATE);
         }
+    }
+
+    public Account update(final AccountDTO.MyAccountReq accountDto) {
+        Account account = userRepository.findById(accountDto.getId()).orElseThrow(() -> new UserNotFoundException(accountDto.getUsername()));
+        account.updateMyAccount(accountDto);
+
+        return userRepository.save(account);
     }
 }
