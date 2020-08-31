@@ -10,6 +10,7 @@ import { GlueStack } from '../lib/glue-stack';
 import { TestInfraStack } from '../lib/TestInfraStack';
 import { ElastiCacheStack } from '../lib/elasticache-stack';
 import { LinuxBastionStack } from '../lib/linux-bastion'
+import { PipelineStack } from '../lib/pipeline-stack';
 
 const app = new cdk.App();
 
@@ -40,3 +41,5 @@ cdnStack.addDependency(ebStack);
 glueStack.addDependency(cdnStack);
 
 const testInfraStack = new TestInfraStack(app, 'TestInfraStack', { env: env });
+
+const pipelineStack= new PipelineStack(app, 'PipelineStack', { env: env });

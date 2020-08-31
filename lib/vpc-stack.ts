@@ -1,6 +1,6 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import { SecurityGroup, GatewayVpcEndpointAwsService, Vpc } from '@aws-cdk/aws-ec2';
+import { SecurityGroup, GatewayVpcEndpointAwsService } from '@aws-cdk/aws-ec2';
 
 export class VpcStack extends cdk.Stack {
     readonly myVpc: ec2.IVpc;
