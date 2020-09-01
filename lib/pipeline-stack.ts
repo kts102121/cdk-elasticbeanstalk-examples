@@ -121,7 +121,7 @@ export class PipelineStack extends cdk.Stack {
                         new cpaction.CloudFormationCreateUpdateStackAction({
                             actionName: 'CFN_Deploy',
                             templatePath: cdkBuildOutput.atPath('TestInfraStack.template.json'),
-                            stackName: 'VpcStack',
+                            stackName: 'TestInfraStack',
                             adminPermissions: true,
 
                         })

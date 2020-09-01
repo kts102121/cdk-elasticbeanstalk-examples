@@ -215,7 +215,7 @@ export class TestInfraStack extends cdk.Stack {
             path: `${__dirname}/../demo/target/demo-0.0.1-SNAPSHOT.jar`,
         });
 
-        const appName = 'MyApp2';
+        const appName = 'MyApp';
         const app = new eb.CfnApplication(this, 'Application', {
             applicationName: appName,
         });
