@@ -34,20 +34,16 @@ export class PipelineStack extends cdk.Stack {
                 },
                 build: {
                   commands: [
-                    'cd demo/',
-                    'mvn package -DskipTests=true -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn',
-                    'cd ..',
                     'ls -ltr',
                     'npm run build',
-                    'npm run cdk synth VpcStack2 -- -v -o dist',
-
+                    'npm run cdk synth VpcStack -- -v -o dist',
                   ],
                 },
               },
               artifacts: {
                 'base-directory': 'dist',
                 files: [
-                  'VpcStack2.template.json',
+                  'VpcStack.template.json',
                 ],
               },
             }),
