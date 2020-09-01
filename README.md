@@ -23,6 +23,9 @@ Cloudfront creates two origins: `s3` for static web hosting and `elb` from elast
 ### Glue and Athena
 CloudFront pushes access logs to s3. Glue and Athena helps the user to pull out useful insights from it without provisioning additional infrastructure
 
+### Pipeline
+CI/CD CDK pipeline. Simply deploy the stack and `git commit` `push` to see if it deploys the stack with changes.
+
 ## Useful commands
 
  * `npm run build`   compile typescript to js

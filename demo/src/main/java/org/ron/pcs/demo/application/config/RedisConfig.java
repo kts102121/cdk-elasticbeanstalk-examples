@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 
 import lombok.RequiredArgsConstructor;
 
-@Profile(value = {"prod","test"})
+@Profile(value = {"prod"})
 @Configuration
 @EnableCaching
 @EnableRedisHttpSession

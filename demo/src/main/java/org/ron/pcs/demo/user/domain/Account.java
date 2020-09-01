@@ -58,7 +58,7 @@ public class Account implements Serializable {
     private Set<Role> roles;
 
     @CreatedDate
-    @Column(columnDefinition = "TIMESTAMP", nullable = false)
+    @Column(columnDefinition = "TIMESTAMP")
     private Date createdAt;
 
     @Column(name = "updated_at")
