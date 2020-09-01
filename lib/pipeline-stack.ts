@@ -22,6 +22,8 @@ export class PipelineStack extends cdk.Stack {
                     REGION: process.env.REGION,
                     MY_IP: process.env.MY_IP,
                     CIDR: process.env.CIDR,
+                    KEY_NAME: process.env.KEY_NAME,
+                    DB_USER: process.env.DB_USER,                    
                 },
               },
               phases: {
@@ -34,9 +36,13 @@ export class PipelineStack extends cdk.Stack {
                 },
                 build: {
                   commands: [
+                    'cd demo/',
+                    'mvn package -DskipTests=true -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn',
+                    'cd ..',
                     'ls -ltr',
                     'npm run build',
                     'npm run cdk synth VpcStack -- -v -o dist',
+
                   ],
                 },
               },
