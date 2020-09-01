@@ -39,7 +39,7 @@ export class PipelineStack extends cdk.Stack {
                     'cd ..',
                     'ls -ltr',
                     'npm run build',
-                    'npm run cdk synth TestInfraStack -- -v -o dist',
+                    'npm run cdk synth VpcStack2 -- -v -o dist',
 
                   ],
                 },
@@ -47,7 +47,7 @@ export class PipelineStack extends cdk.Stack {
               artifacts: {
                 'base-directory': 'dist',
                 files: [
-                  'TestInfraStack.template.json',
+                  'VpcStack2.template.json',
                 ],
               },
             }),
@@ -120,8 +120,8 @@ export class PipelineStack extends cdk.Stack {
                     actions: [
                         new cpaction.CloudFormationCreateUpdateStackAction({
                             actionName: 'CFN_Deploy',
-                            templatePath: cdkBuildOutput.atPath('TestInfraStack.template.json'),
-                            stackName: 'TestInfraStack',
+                            templatePath: cdkBuildOutput.atPath('VpcStack.template.json'),
+                            stackName: 'TestVpcStack',
                             adminPermissions: true,
                         })
                     ]
