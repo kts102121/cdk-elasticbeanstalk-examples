@@ -123,7 +123,6 @@ export class PipelineStack extends cdk.Stack {
                             templatePath: cdkBuildOutput.atPath('TestInfraStack.template.json'),
                             stackName: 'TestInfraStack',
                             adminPermissions: true,
-
                         })
                     ]
                 }
