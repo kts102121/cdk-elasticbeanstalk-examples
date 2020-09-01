@@ -3,6 +3,7 @@ import * as cdk from '@aws-cdk/core'
 import * as codebuild from '@aws-cdk/aws-codebuild'
 import * as codepipeline from '@aws-cdk/aws-codepipeline'
 import * as cpaction from '@aws-cdk/aws-codepipeline-actions'
+import * as iam from '@aws-cdk/aws-iam'
 import { BuildEnvironmentVariableType } from '@aws-cdk/aws-codebuild'
 
 export class PipelineStack extends cdk.Stack {
@@ -38,7 +39,7 @@ export class PipelineStack extends cdk.Stack {
                     'cd ..',
                     'ls -ltr',
                     'npm run build',
-                    'npm run cdk synth VpcStack -- -v -o dist',
+                    'npm run cdk synth TestInfraStack -- -v -o dist',
 
                   ],
                 },
@@ -46,7 +47,7 @@ export class PipelineStack extends cdk.Stack {
               artifacts: {
                 'base-directory': 'dist',
                 files: [
-                  'VpcStack.template.json',
+                  'TestInfraStack.template.json',
                 ],
               },
             }),
@@ -69,9 +70,24 @@ export class PipelineStack extends cdk.Stack {
                         type: BuildEnvironmentVariableType.PLAINTEXT,
                         value: process.env.CIDR
                     },
+                    KEY_NAME: {
+                        type: BuildEnvironmentVariableType.PLAINTEXT,
+                        value: process.env.KEY_NAME
+                    },
+                    DB_USER: {
+                        type: BuildEnvironmentVariableType.PLAINTEXT,
+                        value: process.env.DB_USER
+                    }
                 }
             },
         });
+
+        cdkBuild.addToRolePolicy(new iam.PolicyStatement({
+            actions: [
+                'ec2:DescribeAvailabilityZones'
+            ],
+            resources: ['*']
+        }));
 
         new codepipeline.Pipeline(this, 'Pipeline', {
             stages: [
@@ -104,7 +120,7 @@ export class PipelineStack extends cdk.Stack {
                     actions: [
                         new cpaction.CloudFormationCreateUpdateStackAction({
                             actionName: 'CFN_Deploy',
-                            templatePath: cdkBuildOutput.atPath('VpcStack.template.json'),
+                            templatePath: cdkBuildOutput.atPath('TestInfraStack.template.json'),
                             stackName: 'VpcStack',
                             adminPermissions: true,
 
