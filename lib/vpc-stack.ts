@@ -68,7 +68,7 @@ export class VpcStack extends cdk.Stack {
         });
 
         this.asgSecurityGroup.connections.allowFrom(this.elbSecurityGroup, ec2.Port.tcp(80), 'Application Load Balancer Security Group');
-        this.asgSecurityGroup.connections.allowFrom(this.bastionHostSecurityGroup, ec2.Port.tcp(22), 'Allow connections from bastion hosts');
+        this.asgSecurityGroup.connections.allowFrom(this.bastionHostSecurityGroup, ec2.Port.tcp(22), 'Allows connections from bastion hosts');
 
         this.rdsSecurityGroup = new SecurityGroup(this, 'rdsSecurityGroup', {
             allowAllOutbound: false,
